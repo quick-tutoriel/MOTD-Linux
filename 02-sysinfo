@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# Appel du fichier avec les variables de couleurs
+. /etc/update-motd.d/colors
+
+# Récupération des informations à afficher
+# Récupération des infos sur le processeur
+proc=`cat /proc/cpuinfo | grep model | cut -c14- | sed -n "2 p"`
+# Supprime les espaces dans Avant/ Après
+ proc=$(echo "${proc}" | sed 's/^ *//g')
+# Récupère le nombre de coeurs
+coeurs=`cat /proc/cpuinfo | grep -i "^processor" | wc -l`
+# récupère la mémoire RAM SWAP Libre et Total
+memfree=`cat /proc/meminfo | grep MemFree | awk {'print $2'}`
+memtotal=`cat /proc/meminfo | grep MemTotal | awk {'print $2'}`
+swaptotal=`cat /proc/meminfo | grep SwapTotal | awk {'print $2 " " $3'}`
+pourcentfree=$((($memfree * 100)/$memtotal))
+# Récupère l'uptime du serveur
+uptime=`uptime -p`
+# Récupère l'adresse IP du serveur
+addrip=`hostname -I | cut -d " " -f2`
+# Récupère le nombre de processus en exécution
+process=`ps ax | wc -l | tr -d " "`
+# Récupère le nombre d'utilisateur connecté en SSH/Console
+connecteduser=`who | wc -l`
+# Récupére l'utilisation des disques
+diskused=`df -h | grep /dev/ploop11127p1 | awk {'print $5 "% of " $2'}`
+# Récupère les inodes utilisés
+inodeused=`df -i | grep /dev/ploop11127p1 | awk {'print $5'}`
+
+# Récupére le loadavg
+read one five fifteen rest < /proc/loadavg
+
+# Affichage des variables
+printf ""$LIGHT_GREEN
+printf "  Processeur :" 
+printf ""$NONE
+printf " $proc ($coeurs cores)" 
+printf "\n"
+printf ""$LIGHT_GREEN
+printf "  Charge CPU :"
+printf ""$NONE
+printf " $one (1min) / $five (5min) / $fifteen (15min)"
+printf "\n"
+printf ""$LIGHT_GREEN
+printf "  RAM        :"
+printf ""$NONE
+printf " $(($memfree/1024)) MB soit $pourcentfree%% Libre / $(($memtotal/1024)) MB Total"
+printf "\n"
+printf ""$LIGHT_GREEN
+printf "  Processes  :"
+printf ""$NONE
+printf " $process"     
+printf ""$LIGHT_GREEN
+printf "             Users logged in :"
+printf ""$NONE
+printf " $connecteduser     "
+printf ""$LIGHT_GREEN
+printf "Swap:"
+printf ""$NONE
+printf " $swaptotal"
+printf "\n"
+printf ""$LIGHT_GREEN
+printf "  Disk Usage :"
+printf ""$NONE
+printf " $diskused"
+printf ""$LIGHT_GREEN
+printf "     Inodes Used :"
+printf ""$NONE
+printf " $inodeused%"
+printf "\n"
+printf ""$LIGHT_GREEN
+printf "  Adresse IP :"  
+printf ""$LIGHT_RED 
+printf " $addrip"
+printf ""$NONE
+printf "\n"
+printf ""$LIGHT_GREEN
+printf "  Uptime     :"
+printf ""$NONE
+printf " $uptime"
+printf "\n"
+printf "\n"

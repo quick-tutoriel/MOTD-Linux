@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Appel du fichier avec les codes couleurs
+. /etc/update-motd.d/colors
+
+# Affichage du nom du serveur avec l'extension Prod ou Valid
+# En rouge pour les serveurs de Prod et en vert pour les autres.
+printf "\n"$LIGHT_RED
+figlet "  "$(hostname -s) - Prod
+printf $NONE
+#printf "\n"

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Appel du fichier avec les variables de couleurs
+. /etc/update-motd.d/colors
+
+# Execution du script python lsb-release pour utiliser les variables systèmes
+# pour récupérer RAPIDEMENT les informations de version
+. /etc/lsb-release
+
+echo "  "$DISTRIB_DESCRIPTION $YELLOW "($DISTRIB_CODENAME)" $NONE "($(uname -o)" "$(uname -r)" "$(uname -m))"
+printf "\n"
